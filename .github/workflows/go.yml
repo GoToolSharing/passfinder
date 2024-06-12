@@ -1,0 +1,38 @@
+name: Go
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write
+
+jobs:
+
+  build:
+    if: github.event_name != 'pull_request' || (github.event_name == 'pull_request' && !github.event.pull_request.draft)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: ['1.19', '1.20', '1.21']
+        os: [ 'linux', 'windows', 'darwin' ]
+        arch: [ 'amd64', 'arm64' ]
+    outputs:
+      commit-hash: ${{ steps.get_commit.outputs.commit }}
+  
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ matrix.go }}
+
+    - name: Build
+      env:
+        GOOS: ${{ matrix.os }}
+        GOARCH: ${{ matrix.arch }}
+      run: go build -v ./...
