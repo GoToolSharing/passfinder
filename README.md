@@ -17,3 +17,19 @@
   <img alt="amd64" src="https://img.shields.io/badge/amd64%20(x86__64)-supported-success">
   <img alt="arm64" src="https://img.shields.io/badge/arm64%20(aarch64)-supported-success">
 </div>
+
+## Special
+
+```bash
+> passfinder company -n passfinder --special
+
+passfinder
+passfinder!
+passfinder@
+passfinder#
+passfinder$
+passfinder%
+passfinder+
+passfinder?
+passfinder=
+```
