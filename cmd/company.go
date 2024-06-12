@@ -40,7 +40,10 @@ func init() {
 	rootCmd.AddCommand(companyCmd)
 
 	companyCmd.Flags().StringVarP(&companyName, "name", "n", "", "Company name")
-	companyCmd.MarkFlagRequired("name")
+	err := companyCmd.MarkFlagRequired("name")
+	if err != nil {
+		return
+	}
 	// companyCmd.Flags().StringVarP(&city, "city", "c", "", "City of the company")
 	// companyCmd.Flags().BoolVar(&includeYear, "year", false, "Include the current year in passwords")
 	// companyCmd.Flags().BoolVar(&includeCity, "with-city", false, "Include the city in passwords")
