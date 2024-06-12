@@ -10,16 +10,16 @@ import (
 )
 
 var (
-	companyName         string
-	city                string
-	includeYear         bool
-	includeCity         bool
-	includeAcronym      bool
+	companyName string
+	city        string
+	// includeYear         bool
+	// includeCity         bool
+	// includeAcronym      bool
 	includeSpecialChars bool
-	includeNumericSeq   bool
-	includeUpperCase    bool
-	includeLowerCase    bool
-	includeMixedCase    bool
+	// includeNumericSeq   bool
+	// includeUpperCase    bool
+	// includeLowerCase    bool
+	// includeMixedCase    bool
 )
 
 var companyCmd = &cobra.Command{
@@ -57,42 +57,42 @@ func generateCompanyPasslist(name, city string, year int) []string {
 
 	wordlist = append(wordlist, strings.ToLower(name)) // Init the wordlist
 
-	if includeUpperCase {
-		wordlist = append(wordlist, strings.ToUpper(name))
-	}
+	// if includeUpperCase {
+	// 	wordlist = append(wordlist, strings.ToUpper(name))
+	// }
 
-	if includeLowerCase {
-		wordlist = append(wordlist, strings.ToLower(name))
-	}
+	// if includeLowerCase {
+	// 	wordlist = append(wordlist, strings.ToLower(name))
+	// }
 
-	if includeMixedCase {
-		wordlist = append(wordlist, name)
-		wordlist = append(wordlist, strings.Title(name))
-	}
+	// if includeMixedCase {
+	// 	wordlist = append(wordlist, name)
+	// 	wordlist = append(wordlist, strings.Title(name))
+	// }
 
-	if includeYear {
-		wordlist = append(wordlist, fmt.Sprintf("%s%d", name, year))
-		wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToLower(name), year))
-		wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToUpper(name), year))
-	}
+	// if includeYear {
+	// 	wordlist = append(wordlist, fmt.Sprintf("%s%d", name, year))
+	// 	wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToLower(name), year))
+	// 	wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToUpper(name), year))
+	// }
 
-	if includeCity && city != "" {
-		wordlist = append(wordlist, fmt.Sprintf("%s%s", name, city))
-		wordlist = append(wordlist, fmt.Sprintf("%s%s", city, name))
-	}
+	// if includeCity && city != "" {
+	// 	wordlist = append(wordlist, fmt.Sprintf("%s%s", name, city))
+	// 	wordlist = append(wordlist, fmt.Sprintf("%s%s", city, name))
+	// }
 
-	if includeAcronym {
-		acronym := getAcronym(name)
-		wordlist = append(wordlist, acronym)
-	}
+	// if includeAcronym {
+	// 	acronym := getAcronym(name)
+	// 	wordlist = append(wordlist, acronym)
+	// }
 
-	if includeNumericSeq {
-		for i := 1; i <= 3; i++ {
-			wordlist = append(wordlist, fmt.Sprintf("%s%d", name, i))
-			wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToLower(name), i))
-			wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToUpper(name), i))
-		}
-	}
+	// if includeNumericSeq {
+	// 	for i := 1; i <= 3; i++ {
+	// 		wordlist = append(wordlist, fmt.Sprintf("%s%d", name, i))
+	// 		wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToLower(name), i))
+	// 		wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToUpper(name), i))
+	// 	}
+	// }
 
 	// Last permutation
 	if includeSpecialChars {
@@ -102,11 +102,11 @@ func generateCompanyPasslist(name, city string, year int) []string {
 	return wordlist
 }
 
-func getAcronym(name string) string {
-	words := strings.Fields(name)
-	acronym := ""
-	for _, word := range words {
-		acronym += strings.ToUpper(string(word[0]))
-	}
-	return acronym
-}
+// func getAcronym(name string) string {
+// 	words := strings.Fields(name)
+// 	acronym := ""
+// 	for _, word := range words {
+// 		acronym += strings.ToUpper(string(word[0]))
+// 	}
+// 	return acronym
+// }
