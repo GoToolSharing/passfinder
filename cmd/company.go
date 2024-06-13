@@ -19,7 +19,7 @@ var (
 	// includeNumericSeq   bool
 	// includeUpperCase    bool
 	// includeLowerCase    bool
-	// includeMixedCase    bool
+	includeMixedCase bool
 )
 
 var companyCmd = &cobra.Command{
@@ -51,8 +51,8 @@ func init() {
 	// companyCmd.Flags().BoolVar(&includeNumericSeq, "numeric", false, "Include numeric sequences in passwords")
 	// companyCmd.Flags().BoolVar(&includeUpperCase, "uppercase", false, "Include uppercase variations")
 	// companyCmd.Flags().BoolVar(&includeLowerCase, "lowercase", false, "Include lowercase variations")
-	// companyCmd.Flags().BoolVar(&includeMixedCase, "mixedcase", false, "Include mixed case variations")
-	companyCmd.Flags().BoolVar(&includeSpecialChars, "special", false, "Include special characters at the end of the passwords")
+	companyCmd.Flags().BoolVar(&includeMixedCase, "mixedcase", false, "Include mixed case variations")
+	companyCmd.Flags().BoolVar(&includeSpecialChars, "end-special", false, "Include special characters at the end of the passwords")
 }
 
 func generateCompanyPasslist(name, city string, year int) []string {
@@ -66,11 +66,6 @@ func generateCompanyPasslist(name, city string, year int) []string {
 
 	// if includeLowerCase {
 	// 	wordlist = append(wordlist, strings.ToLower(name))
-	// }
-
-	// if includeMixedCase {
-	// 	wordlist = append(wordlist, name)
-	// 	wordlist = append(wordlist, strings.Title(name))
 	// }
 
 	// if includeYear {
@@ -97,7 +92,10 @@ func generateCompanyPasslist(name, city string, year int) []string {
 	// 	}
 	// }
 
-	// Last permutation
+	if includeMixedCase {
+		wordlist = generate.WithMixedCase(wordlist)
+	}
+
 	if includeSpecialChars {
 		wordlist = generate.WithSpecialChars(wordlist)
 	}
