@@ -3,8 +3,6 @@ package generate
 import (
 	"fmt"
 	"strings"
-
-	"github.com/GoToolSharing/passfinder/lib/utils"
 )
 
 func WithSpecialChars(wordlist []string) []string {
@@ -23,7 +21,7 @@ func WithMixedCase(wordlist []string) []string {
 		caseVariations := generateCaseVariations(word)
 		wordlist = append(wordlist, caseVariations...)
 	}
-	return utils.RemoveDuplicates(wordlist)
+	return wordlist
 }
 
 func generateCaseVariations(word string) []string {

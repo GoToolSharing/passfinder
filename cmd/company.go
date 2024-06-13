@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/GoToolSharing/passfinder/lib/generate"
+	"github.com/GoToolSharing/passfinder/lib/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +17,7 @@ var (
 	includeYear            bool
 	includeAllPermutations bool
 	startCaps              bool
+	shortYear              bool
 	// includeCity         bool
 	// includeAcronym      bool
 	includeSpecialChars bool
@@ -31,16 +33,19 @@ var companyCmd = &cobra.Command{
 	Long:  `Generate a passlist based on company name, current year, city, and other relevant information.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if !includeYear && yearSeparators {
-			fmt.Println("You cannot use --year-separators without --year")
+		if (!includeYear && !shortYear) && yearSeparators {
+			fmt.Println("You cannot use --year-separators without --year or --short-year")
 			return
 		}
 
-		year := time.Now().Year()
+		if includeYear && shortYear {
+			fmt.Println("You cannot use both --year and --short-year")
+			return
+		}
 
-		wordlist := generateCompanyPasslist(companyName, city, year)
+		wordlist := generateCompanyPasslist(companyName, city)
 
-		// TODO: Remove duplicates
+		wordlist = utils.RemoveDuplicates(wordlist)
 		for _, password := range wordlist {
 			fmt.Println(password)
 		}
@@ -57,16 +62,16 @@ func init() {
 	}
 	// companyCmd.Flags().StringVarP(&city, "city", "c", "", "City of the company")
 	companyCmd.Flags().BoolVar(&includeYear, "year", false, "Include the current year in passwords")
-	// companyCmd.Flags().BoolVar(&includeNumericSeq, "numeric", false, "Include numeric sequences in passwords")
 	companyCmd.Flags().BoolVar(&includeMixedCase, "mixed-case", false, "Include mixed case variations")
 	companyCmd.Flags().BoolVar(&yearSeparators, "year-separators", false, "Special characters to separate the company name and the year")
 	companyCmd.Flags().BoolVar(&includeSpecialChars, "end-special", false, "Include special characters at the end of the passwords")
 	companyCmd.Flags().BoolVar(&includeAllPermutations, "all", false, "Run all permutations")
 	companyCmd.Flags().BoolVar(&startCaps, "start-caps", false, "First letter in caps")
+	companyCmd.Flags().BoolVar(&shortYear, "short-year", false, "Truncate the year to two digits")
 	// companyCmd.Flags().BoolVar(&includeSpecialChars, "pass-pol", false, "Password Policy (remove bad passwords)")
 }
 
-func generateCompanyPasslist(name, city string, year int) []string {
+func generateCompanyPasslist(name, city string) []string {
 	var wordlist []string
 
 	wordlist = append(wordlist, strings.ToLower(name)) // Init the wordlist
@@ -112,7 +117,17 @@ func generateCompanyPasslist(name, city string, year int) []string {
 		wordlist = generate.WithMixedCase(wordlist)
 	}
 
+	if shortYear {
+		year := time.Now().Year() % 100
+		var separators string
+		if yearSeparators {
+			separators = "!@#$%+?=*"
+		}
+		wordlist = generate.WithYearAndSeparators(wordlist, year, separators)
+	}
+
 	if includeYear {
+		year := time.Now().Year()
 		var separators string
 		if yearSeparators {
 			separators = "!@#$%+?=*"

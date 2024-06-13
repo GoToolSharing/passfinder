@@ -60,7 +60,16 @@ PAsSfiNder
 passfinder2024
 ```
 
-## year-separator
+## Short year
+
+```bash
+> passfinder company -n passfinder --short-year
+
+passfinder
+passfinder24
+```
+
+## year-separators
 
 ```bash
 > passfinder company -n passfinder --year --year-separators
@@ -77,11 +86,28 @@ passfinder?2024
 passfinder=2024
 ```
 
+```bash
+> passfinder company -n passfinder --short-year --year-separators
+
+passfinder
+passfinder24
+passfinder!24
+passfinder@24
+passfinder#24
+passfinder$24
+passfinder%24
+passfinder+24
+passfinder?24
+passfinder=24
+passfinder*24
+```
+
 ## all
 
 ```bash
 > passfinder company -n passfinder --all
 
+[...]
 PASSFINdEr!2024?
 PASSFINdEr!2024=
 PASSFINdEr!2024*
@@ -92,6 +118,7 @@ PASSFINdEr@2024$
 PASSFINdEr@2024%
 PASSFINdEr@2024+
 PASSFINdEr@2024?
+[...]
 ```
 
 ## Start caps
@@ -102,4 +129,3 @@ PASSFINdEr@2024?
 passfinder
 Passfinder
 ```
-
