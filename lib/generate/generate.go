@@ -65,3 +65,43 @@ func WithStartCaps(wordlist []string) []string {
 	}
 	return wordlist
 }
+
+func WithLeetCode(wordlist []string) []string {
+	leetMap := map[rune][]string{
+		'a': {"4", "@"}, 'A': {"4", "@"},
+		'e': {"3"}, 'E': {"3"},
+		'i': {"1", "!"}, 'I': {"1", "!"},
+		'o': {"0"}, 'O': {"0"},
+		's': {"5", "$"}, 'S': {"5", "$"},
+		't': {"7"}, 'T': {"7"},
+		'l': {"1"}, 'L': {"1"},
+	}
+
+	for _, word := range wordlist {
+		leetVariations := generateLeetVariations(word, leetMap)
+		wordlist = append(wordlist, leetVariations...)
+	}
+
+	return wordlist
+}
+
+func generateLeetVariations(word string, leetMap map[rune][]string) []string {
+	var result []string
+	helperLeet(word, "", 0, &result, leetMap)
+	return result
+}
+
+func helperLeet(word, current string, index int, result *[]string, leetMap map[rune][]string) {
+	if index == len(word) {
+		*result = append(*result, current)
+		return
+	}
+
+	char := rune(word[index])
+	if leetChars, ok := leetMap[char]; ok {
+		for _, leetChar := range leetChars {
+			helperLeet(word, current+leetChar, index+1, result, leetMap)
+		}
+	}
+	helperLeet(word, current+string(char), index+1, result, leetMap)
+}

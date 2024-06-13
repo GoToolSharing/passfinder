@@ -20,6 +20,7 @@ var (
 	shortYear              bool
 	includeSpecialChars    bool
 	includeMixedCase       bool
+	includeLeetCode        bool
 )
 
 var companyCmd = &cobra.Command{
@@ -63,6 +64,7 @@ func init() {
 	companyCmd.Flags().BoolVar(&includeAllPermutations, "all", false, "Run all permutations")
 	companyCmd.Flags().BoolVar(&startCaps, "start-caps", false, "First letter in caps")
 	companyCmd.Flags().BoolVar(&shortYear, "short-year", false, "Truncate the year to two digits")
+	companyCmd.Flags().BoolVar(&includeLeetCode, "leet", false, "Add leet code")
 	// companyCmd.Flags().BoolVar(&includeSpecialChars, "pass-pol", false, "Password Policy (remove bad passwords)")
 }
 
@@ -77,6 +79,7 @@ func generateCompanyPasslist(name, city string) []string {
 		yearSeparators = true
 		shortYear = false // We cannot have both year and shortYear
 		includeSpecialChars = true
+		includeLeetCode = true
 	}
 
 	if startCaps {
@@ -85,6 +88,10 @@ func generateCompanyPasslist(name, city string) []string {
 
 	if includeMixedCase {
 		wordlist = generate.WithMixedCase(wordlist)
+	}
+
+	if includeLeetCode {
+		wordlist = generate.WithLeetCode(wordlist)
 	}
 
 	if shortYear {
