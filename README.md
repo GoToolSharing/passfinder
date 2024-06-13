@@ -59,3 +59,20 @@ PAsSfiNder
 
 passfinder2024
 ```
+
+## year-separator
+
+```bash
+> passfinder company -n passfinder --year --year-separators
+
+passfinder
+passfinder2024
+passfinder!2024
+passfinder@2024
+passfinder#2024
+passfinder$2024
+passfinder%2024
+passfinder+2024
+passfinder?2024
+passfinder=2024
+```
