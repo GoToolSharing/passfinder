@@ -2,9 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
 	"strings"
 	"time"
 
+	"github.com/GoToolSharing/passfinder/config"
 	"github.com/GoToolSharing/passfinder/lib/generate"
 	"github.com/GoToolSharing/passfinder/lib/utils"
 	"github.com/spf13/cobra"
@@ -43,8 +46,23 @@ var companyCmd = &cobra.Command{
 		wordlist := generateCompanyPasslist(companyName, city)
 
 		wordlist = utils.RemoveDuplicates(wordlist)
-		for _, password := range wordlist {
-			fmt.Println(password)
+		if config.GlobalConfig.OutputFile != "" {
+			file, err := os.OpenFile(config.GlobalConfig.OutputFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer file.Close()
+			for _, password := range wordlist {
+				_, err := file.WriteString(password + "\n")
+				if err != nil {
+					log.Fatal(err)
+					break
+				}
+			}
+		} else {
+			for _, password := range wordlist {
+				fmt.Println(password)
+			}
 		}
 	},
 }
@@ -82,6 +100,7 @@ func generateCompanyPasslist(name, city string) []string {
 		shortYear = false // We cannot have both year and shortYear
 		includeSpecialChars = true
 		includeLeetCode = true
+		startCaps = true
 	}
 
 	if startCaps {

@@ -18,6 +18,21 @@
   <img alt="arm64" src="https://img.shields.io/badge/arm64%20(aarch64)-supported-success">
 </div>
 
+
+# Installation
+
+## Stable
+
+```bash
+go install https://github.com/GoToolSharing/passfinder
+```
+
+## Dev
+
+```bash
+go install https://github.com/GoToolSharing/passfinder@dev
+```
+
 # Company
 
 ## Special

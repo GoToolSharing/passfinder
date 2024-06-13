@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/GoToolSharing/passfinder/config"
 	"github.com/spf13/cobra"
 )
 
@@ -21,4 +22,5 @@ func Execute() {
 
 func init() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
+	rootCmd.PersistentFlags().StringVarP(&config.GlobalConfig.OutputFile, "output", "", "", "Output file")
 }
