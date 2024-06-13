@@ -19,12 +19,11 @@ func WithSpecialChars(wordlist []string) []string {
 }
 
 func WithMixedCase(wordlist []string) []string {
-	var newWordlist []string
 	for _, word := range wordlist {
 		caseVariations := generateCaseVariations(word)
-		newWordlist = append(newWordlist, caseVariations...)
+		wordlist = append(wordlist, caseVariations...)
 	}
-	return utils.RemoveDuplicates(newWordlist)
+	return utils.RemoveDuplicates(wordlist)
 }
 
 func generateCaseVariations(word string) []string {
@@ -53,6 +52,17 @@ func WithYearAndSeparators(wordlist []string, year int, separators string) []str
 		wordlist = append(wordlist, fmt.Sprintf("%s%d", word, year))
 		for _, separator := range separatorsList {
 			wordlist = append(wordlist, fmt.Sprintf("%s%s%d", word, separator, year))
+		}
+	}
+	return wordlist
+}
+
+func WithStartCaps(wordlist []string) []string {
+	for _, word := range wordlist {
+		if len(word) > 0 {
+			wordlist = append(wordlist, strings.ToUpper(string(word[0]))+word[1:])
+		} else {
+			wordlist = append(wordlist, word)
 		}
 	}
 	return wordlist

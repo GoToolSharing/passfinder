@@ -15,6 +15,7 @@ var (
 	yearSeparators         bool
 	includeYear            bool
 	includeAllPermutations bool
+	startCaps              bool
 	// includeCity         bool
 	// includeAcronym      bool
 	includeSpecialChars bool
@@ -38,6 +39,8 @@ var companyCmd = &cobra.Command{
 		year := time.Now().Year()
 
 		wordlist := generateCompanyPasslist(companyName, city, year)
+
+		// TODO: Remove duplicates
 		for _, password := range wordlist {
 			fmt.Println(password)
 		}
@@ -59,7 +62,7 @@ func init() {
 	companyCmd.Flags().BoolVar(&yearSeparators, "year-separators", false, "Special characters to separate the company name and the year")
 	companyCmd.Flags().BoolVar(&includeSpecialChars, "end-special", false, "Include special characters at the end of the passwords")
 	companyCmd.Flags().BoolVar(&includeAllPermutations, "all", false, "Run all permutations")
-	// companyCmd.Flags().BoolVar(&includeSpecialChars, "start-caps", false, "First letter in caps")
+	companyCmd.Flags().BoolVar(&startCaps, "start-caps", false, "First letter in caps")
 	// companyCmd.Flags().BoolVar(&includeSpecialChars, "pass-pol", false, "Password Policy (remove bad passwords)")
 }
 
@@ -73,6 +76,10 @@ func generateCompanyPasslist(name, city string, year int) []string {
 		includeYear = true
 		yearSeparators = true
 		includeSpecialChars = true
+	}
+
+	if startCaps {
+		wordlist = generate.WithStartCaps(wordlist)
 	}
 
 	// if includeUpperCase {

@@ -94,3 +94,12 @@ PASSFINdEr@2024+
 PASSFINdEr@2024?
 ```
 
+## Start caps
+
+```bash
+> passfinder company -n passfinder --start-caps
+
+passfinder
+Passfinder
+```
+
