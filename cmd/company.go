@@ -12,7 +12,7 @@ import (
 var (
 	companyName string
 	city        string
-	// includeYear         bool
+	includeYear bool
 	// includeCity         bool
 	// includeAcronym      bool
 	includeSpecialChars bool
@@ -45,7 +45,7 @@ func init() {
 		return
 	}
 	// companyCmd.Flags().StringVarP(&city, "city", "c", "", "City of the company")
-	// companyCmd.Flags().BoolVar(&includeYear, "year", false, "Include the current year in passwords")
+	companyCmd.Flags().BoolVar(&includeYear, "year", false, "Include the current year in passwords")
 	// companyCmd.Flags().BoolVar(&includeCity, "with-city", false, "Include the city in passwords")
 	// companyCmd.Flags().BoolVar(&includeAcronym, "acronym", false, "Include acronym of the company name")
 	// companyCmd.Flags().BoolVar(&includeNumericSeq, "numeric", false, "Include numeric sequences in passwords")
@@ -68,12 +68,6 @@ func generateCompanyPasslist(name, city string, year int) []string {
 	// 	wordlist = append(wordlist, strings.ToLower(name))
 	// }
 
-	// if includeYear {
-	// 	wordlist = append(wordlist, fmt.Sprintf("%s%d", name, year))
-	// 	wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToLower(name), year))
-	// 	wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToUpper(name), year))
-	// }
-
 	// if includeCity && city != "" {
 	// 	wordlist = append(wordlist, fmt.Sprintf("%s%s", name, city))
 	// 	wordlist = append(wordlist, fmt.Sprintf("%s%s", city, name))
@@ -91,6 +85,10 @@ func generateCompanyPasslist(name, city string, year int) []string {
 	// 		wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToUpper(name), i))
 	// 	}
 	// }
+
+	if includeYear {
+		wordlist = generate.WithYear(wordlist)
+	}
 
 	if includeMixedCase {
 		wordlist = generate.WithMixedCase(wordlist)

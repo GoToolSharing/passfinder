@@ -1,6 +1,11 @@
 package generate
 
-import "github.com/GoToolSharing/passfinder/lib/utils"
+import (
+	"fmt"
+	"time"
+
+	"github.com/GoToolSharing/passfinder/lib/utils"
+)
 
 func WithSpecialChars(wordlist []string) []string {
 	specialChars := []string{"!", "@", "#", "$", "%", "+", "?", "="} // TODO: Configurable charset
@@ -39,4 +44,13 @@ func helper(word, current string, index int, result *[]string) {
 	} else if word[index] >= 'A' && word[index] <= 'Z' {
 		helper(word, current+string(word[index]-'A'+'a'), index+1, result)
 	}
+}
+
+func WithYear(wordlist []string) []string {
+	currentYear := time.Now().Year()
+	var newWordlist []string
+	for _, word := range wordlist {
+		newWordlist = append(newWordlist, fmt.Sprintf("%s%d", word, currentYear))
+	}
+	return newWordlist
 }
