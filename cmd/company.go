@@ -18,13 +18,8 @@ var (
 	includeAllPermutations bool
 	startCaps              bool
 	shortYear              bool
-	// includeCity         bool
-	// includeAcronym      bool
-	includeSpecialChars bool
-	// includeNumericSeq   bool
-	// includeUpperCase    bool
-	// includeLowerCase    bool
-	includeMixedCase bool
+	includeSpecialChars    bool
+	includeMixedCase       bool
 )
 
 var companyCmd = &cobra.Command{
@@ -80,38 +75,13 @@ func generateCompanyPasslist(name, city string) []string {
 		includeMixedCase = true
 		includeYear = true
 		yearSeparators = true
+		shortYear = false // We cannot have both year and shortYear
 		includeSpecialChars = true
 	}
 
 	if startCaps {
 		wordlist = generate.WithStartCaps(wordlist)
 	}
-
-	// if includeUpperCase {
-	// 	wordlist = append(wordlist, strings.ToUpper(name))
-	// }
-
-	// if includeLowerCase {
-	// 	wordlist = append(wordlist, strings.ToLower(name))
-	// }
-
-	// if includeCity && city != "" {
-	// 	wordlist = append(wordlist, fmt.Sprintf("%s%s", name, city))
-	// 	wordlist = append(wordlist, fmt.Sprintf("%s%s", city, name))
-	// }
-
-	// if includeAcronym {
-	// 	acronym := getAcronym(name)
-	// 	wordlist = append(wordlist, acronym)
-	// }
-
-	// if includeNumericSeq {
-	// 	for i := 1; i <= 3; i++ {
-	// 		wordlist = append(wordlist, fmt.Sprintf("%s%d", name, i))
-	// 		wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToLower(name), i))
-	// 		wordlist = append(wordlist, fmt.Sprintf("%s%d", strings.ToUpper(name), i))
-	// 	}
-	// }
 
 	if includeMixedCase {
 		wordlist = generate.WithMixedCase(wordlist)
@@ -141,12 +111,3 @@ func generateCompanyPasslist(name, city string) []string {
 
 	return wordlist
 }
-
-// func getAcronym(name string) string {
-// 	words := strings.Fields(name)
-// 	acronym := ""
-// 	for _, word := range words {
-// 		acronym += strings.ToUpper(string(word[0]))
-// 	}
-// 	return acronym
-// }
