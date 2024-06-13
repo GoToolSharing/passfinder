@@ -21,6 +21,7 @@ var (
 	includeSpecialChars    bool
 	includeMixedCase       bool
 	includeLeetCode        bool
+	includeMask            string
 )
 
 var companyCmd = &cobra.Command{
@@ -66,6 +67,7 @@ func init() {
 	companyCmd.Flags().BoolVar(&shortYear, "short-year", false, "Truncate the year to two digits")
 	companyCmd.Flags().BoolVar(&includeLeetCode, "leet", false, "Add leet code")
 	// companyCmd.Flags().BoolVar(&includeSpecialChars, "pass-pol", false, "Password Policy (remove bad passwords)")
+	companyCmd.Flags().StringVar(&includeMask, "mask", "", "Add mask to the list (e.g., '%w%s')")
 }
 
 func generateCompanyPasslist(name, city string) []string {
@@ -114,6 +116,10 @@ func generateCompanyPasslist(name, city string) []string {
 
 	if includeSpecialChars {
 		wordlist = generate.WithSpecialChars(wordlist)
+	}
+
+	if includeMask != "" {
+		wordlist = generate.WithMask(wordlist, includeMask)
 	}
 
 	return wordlist

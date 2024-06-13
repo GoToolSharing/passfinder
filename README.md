@@ -18,6 +18,8 @@
   <img alt="arm64" src="https://img.shields.io/badge/arm64%20(aarch64)-supported-success">
 </div>
 
+# Company
+
 ## Special
 
 ```bash
@@ -146,5 +148,24 @@ p@5sf!nder
 p@5sfind3r
 p@5sfinder
 p@$5f1nd3r
+[...]
+```
+
+## mask
+
+```bash
+> passfinder company -n passfinder --mask "%w202%d%s"
+
+[...]
+passfinder2027<
+passfinder2027>
+passfinder2027?
+passfinder2027/
+passfinder2027\
+passfinder2028!
+passfinder2028@
+passfinder2028#
+passfinder2028$
+passfinder2028%
 [...]
 ```

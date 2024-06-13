@@ -105,3 +105,58 @@ func helperLeet(word, current string, index int, result *[]string, leetMap map[r
 	}
 	helperLeet(word, current+string(char), index+1, result, leetMap)
 }
+
+func WithMask(wordlist []string, mask string) []string {
+	specialChars := []rune("!@#$%^&*()_+-=[]{}|;:'\",.<>?/\\")
+	digits := []rune("0123456789")
+	lowercase := []rune("abcdefghijklmnopqrstuvwxyz")
+	uppercase := []rune("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	allChars := append(append(append(lowercase, uppercase...), digits...), specialChars...)
+
+	for _, word := range wordlist {
+		var maskedWords []string
+		applyMask(word, mask, "", &maskedWords, specialChars, digits, lowercase, uppercase, allChars)
+		wordlist = append(wordlist, maskedWords...)
+	}
+
+	return wordlist
+}
+
+func applyMask(word, mask, current string, result *[]string, specialChars, digits, lowercase, uppercase, allChars []rune) {
+	if len(mask) == 0 {
+		*result = append(*result, current)
+		return
+	}
+
+	switch mask[0] {
+	case '%':
+		if len(mask) > 1 {
+			switch mask[1] {
+			case 'w':
+				applyMask(word, mask[2:], current+word, result, specialChars, digits, lowercase, uppercase, allChars)
+			case 's':
+				for _, char := range specialChars {
+					applyMask(word, mask[2:], current+string(char), result, specialChars, digits, lowercase, uppercase, allChars)
+				}
+			case 'l':
+				for _, char := range lowercase {
+					applyMask(word, mask[2:], current+string(char), result, specialChars, digits, lowercase, uppercase, allChars)
+				}
+			case 'u':
+				for _, char := range uppercase {
+					applyMask(word, mask[2:], current+string(char), result, specialChars, digits, lowercase, uppercase, allChars)
+				}
+			case 'd':
+				for _, char := range digits {
+					applyMask(word, mask[2:], current+string(char), result, specialChars, digits, lowercase, uppercase, allChars)
+				}
+			case 'a':
+				for _, char := range allChars {
+					applyMask(word, mask[2:], current+string(char), result, specialChars, digits, lowercase, uppercase, allChars)
+				}
+			}
+		}
+	default:
+		applyMask(word, mask[1:], current+string(mask[0]), result, specialChars, digits, lowercase, uppercase, allChars)
+	}
+}
