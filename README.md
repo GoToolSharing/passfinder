@@ -76,3 +76,21 @@ passfinder+2024
 passfinder?2024
 passfinder=2024
 ```
+
+## all
+
+```bash
+> passfinder company -n passfinder --all
+
+PASSFINdEr!2024?
+PASSFINdEr!2024=
+PASSFINdEr!2024*
+PASSFINdEr@2024!
+PASSFINdEr@2024@
+PASSFINdEr@2024#
+PASSFINdEr@2024$
+PASSFINdEr@2024%
+PASSFINdEr@2024+
+PASSFINdEr@2024?
+```
+

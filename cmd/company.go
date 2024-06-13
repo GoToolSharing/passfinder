@@ -10,10 +10,11 @@ import (
 )
 
 var (
-	companyName    string
-	city           string
-	yearSeparators bool
-	includeYear    bool
+	companyName            string
+	city                   string
+	yearSeparators         bool
+	includeYear            bool
+	includeAllPermutations bool
 	// includeCity         bool
 	// includeAcronym      bool
 	includeSpecialChars bool
@@ -57,12 +58,22 @@ func init() {
 	companyCmd.Flags().BoolVar(&includeMixedCase, "mixed-case", false, "Include mixed case variations")
 	companyCmd.Flags().BoolVar(&yearSeparators, "year-separators", false, "Special characters to separate the company name and the year")
 	companyCmd.Flags().BoolVar(&includeSpecialChars, "end-special", false, "Include special characters at the end of the passwords")
+	companyCmd.Flags().BoolVar(&includeAllPermutations, "all", false, "Run all permutations")
+	// companyCmd.Flags().BoolVar(&includeSpecialChars, "start-caps", false, "First letter in caps")
+	// companyCmd.Flags().BoolVar(&includeSpecialChars, "pass-pol", false, "Password Policy (remove bad passwords)")
 }
 
 func generateCompanyPasslist(name, city string, year int) []string {
 	var wordlist []string
 
 	wordlist = append(wordlist, strings.ToLower(name)) // Init the wordlist
+
+	if includeAllPermutations {
+		includeMixedCase = true
+		includeYear = true
+		yearSeparators = true
+		includeSpecialChars = true
+	}
 
 	// if includeUpperCase {
 	// 	wordlist = append(wordlist, strings.ToUpper(name))
@@ -97,7 +108,7 @@ func generateCompanyPasslist(name, city string, year int) []string {
 	if includeYear {
 		var separators string
 		if yearSeparators {
-			separators = "!@#$%+?="
+			separators = "!@#$%+?=*"
 		}
 		wordlist = generate.WithYearAndSeparators(wordlist, year, separators)
 	}
