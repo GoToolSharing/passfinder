@@ -2,7 +2,7 @@ package generate
 
 import (
 	"fmt"
-	"time"
+	"strings"
 
 	"github.com/GoToolSharing/passfinder/lib/utils"
 )
@@ -46,11 +46,14 @@ func helper(word, current string, index int, result *[]string) {
 	}
 }
 
-func WithYear(wordlist []string) []string {
-	currentYear := time.Now().Year()
-	var newWordlist []string
+func WithYearAndSeparators(wordlist []string, year int, separators string) []string {
+	separatorsList := strings.Split(separators, "")
+
 	for _, word := range wordlist {
-		newWordlist = append(newWordlist, fmt.Sprintf("%s%d", word, currentYear))
+		wordlist = append(wordlist, fmt.Sprintf("%s%d", word, year))
+		for _, separator := range separatorsList {
+			wordlist = append(wordlist, fmt.Sprintf("%s%s%d", word, separator, year))
+		}
 	}
-	return newWordlist
+	return wordlist
 }

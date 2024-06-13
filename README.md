@@ -34,10 +34,10 @@ passfinder?
 passfinder=
 ```
 
-## Mixedcase
+## mixed-case
 
 ```bash
-> passfinder company -n passfinder --mixedcase
+> passfinder company -n passfinder --mixed-case
 
 PAssFINDER
 PAsSfinder

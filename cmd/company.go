@@ -10,9 +10,10 @@ import (
 )
 
 var (
-	companyName string
-	city        string
-	includeYear bool
+	companyName    string
+	city           string
+	yearSeparators bool
+	includeYear    bool
 	// includeCity         bool
 	// includeAcronym      bool
 	includeSpecialChars bool
@@ -27,6 +28,12 @@ var companyCmd = &cobra.Command{
 	Short: "Generate a passlist based on company information",
 	Long:  `Generate a passlist based on company name, current year, city, and other relevant information.`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		if !includeYear && yearSeparators {
+			fmt.Println("You cannot use --year-separators without --year")
+			return
+		}
+
 		year := time.Now().Year()
 
 		wordlist := generateCompanyPasslist(companyName, city, year)
@@ -46,12 +53,9 @@ func init() {
 	}
 	// companyCmd.Flags().StringVarP(&city, "city", "c", "", "City of the company")
 	companyCmd.Flags().BoolVar(&includeYear, "year", false, "Include the current year in passwords")
-	// companyCmd.Flags().BoolVar(&includeCity, "with-city", false, "Include the city in passwords")
-	// companyCmd.Flags().BoolVar(&includeAcronym, "acronym", false, "Include acronym of the company name")
 	// companyCmd.Flags().BoolVar(&includeNumericSeq, "numeric", false, "Include numeric sequences in passwords")
-	// companyCmd.Flags().BoolVar(&includeUpperCase, "uppercase", false, "Include uppercase variations")
-	// companyCmd.Flags().BoolVar(&includeLowerCase, "lowercase", false, "Include lowercase variations")
-	companyCmd.Flags().BoolVar(&includeMixedCase, "mixedcase", false, "Include mixed case variations")
+	companyCmd.Flags().BoolVar(&includeMixedCase, "mixed-case", false, "Include mixed case variations")
+	companyCmd.Flags().BoolVar(&yearSeparators, "year-separators", false, "Special characters to separate the company name and the year")
 	companyCmd.Flags().BoolVar(&includeSpecialChars, "end-special", false, "Include special characters at the end of the passwords")
 }
 
@@ -86,12 +90,16 @@ func generateCompanyPasslist(name, city string, year int) []string {
 	// 	}
 	// }
 
-	if includeYear {
-		wordlist = generate.WithYear(wordlist)
-	}
-
 	if includeMixedCase {
 		wordlist = generate.WithMixedCase(wordlist)
+	}
+
+	if includeYear {
+		var separators string
+		if yearSeparators {
+			separators = "!@#$%+?="
+		}
+		wordlist = generate.WithYearAndSeparators(wordlist, year, separators)
 	}
 
 	if includeSpecialChars {
