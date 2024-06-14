@@ -24,6 +24,7 @@ var (
 	includeSpecialChars    bool
 	includeMixedCase       bool
 	includeLeetCode        bool
+	includeUppercase       bool
 	includeMask            string
 )
 
@@ -85,6 +86,7 @@ func init() {
 	companyCmd.Flags().BoolVar(&includeStartCaps, "start-caps", false, "Capitalize the first letter of the passwords")
 	companyCmd.Flags().BoolVar(&includeShortYear, "short-year", false, "Truncate the year to the last two digits")
 	companyCmd.Flags().BoolVarP(&includeLeetCode, "leet", "l", false, "Convert characters to leet speak")
+	companyCmd.Flags().BoolVarP(&includeUppercase, "uppercase", "u", false, "Capitalize all letters of the passwords")
 	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
 }
 
@@ -113,6 +115,10 @@ func generateCompanyPasslist(name, city string) []string {
 
 	if includeLeetCode {
 		wordlist = generate.WithLeetCode(wordlist)
+	}
+
+	if includeUppercase {
+		wordlist = generate.WithUppercase(wordlist)
 	}
 
 	if includeShortYear {

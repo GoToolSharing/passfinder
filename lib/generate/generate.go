@@ -160,3 +160,10 @@ func applyMask(word, mask, current string, result *[]string, specialChars, digit
 		applyMask(word, mask[1:], current+string(mask[0]), result, specialChars, digits, lowercase, uppercase, allChars)
 	}
 }
+
+func WithUppercase(wordlist []string) []string {
+	for _, word := range wordlist {
+		wordlist = append(wordlist, strings.ToUpper(word))
+	}
+	return wordlist
+}
