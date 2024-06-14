@@ -6,7 +6,7 @@ import (
 )
 
 func WithSpecialChars(wordlist []string) []string {
-	specialChars := []string{"!", "@", "#", "$", "%", "+", "?", "=", "*"} // TODO: Configurable charset
+	specialChars := []string{"!", "@", "#", "$", "%", "+", "?", "=", "*"}
 	for _, word := range wordlist {
 		for _, char := range specialChars {
 			wordlist = append(wordlist, word+char)

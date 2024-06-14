@@ -44,7 +44,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: build
-    if: needs.build.outputs.go == '1.22' && needs.build.outputs.os == 'linux' && needs.build.outputs.arch == 'amd64'
     steps:
     - uses: actions/checkout@v4
 
