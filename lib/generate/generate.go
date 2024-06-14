@@ -43,16 +43,30 @@ func helper(word, current string, index int, result *[]string) {
 	}
 }
 
-func WithYearAndSeparators(wordlist []string, year int, separators string) []string {
+func WithYearAndSeparators(wordlist []string, year int, separators string, yearRange int) []string {
+	var newWordlist []string
 	separatorsList := strings.Split(separators, "")
 
-	for _, word := range wordlist {
-		wordlist = append(wordlist, fmt.Sprintf("%s%d", word, year))
+	addYearWithSeparators := func(word string, year int) {
+		newWordlist = append(newWordlist, fmt.Sprintf("%s%d", word, year))
 		for _, separator := range separatorsList {
-			wordlist = append(wordlist, fmt.Sprintf("%s%s%d", word, separator, year))
+			newWordlist = append(newWordlist, fmt.Sprintf("%s%s%d", word, separator, year))
 		}
 	}
-	return wordlist
+
+	if yearRange > 0 {
+		for i := year - yearRange; i <= year+yearRange; i++ {
+			for _, word := range wordlist {
+				addYearWithSeparators(word, i)
+			}
+		}
+	} else {
+		for _, word := range wordlist {
+			addYearWithSeparators(word, year)
+		}
+	}
+
+	return append(wordlist, newWordlist...)
 }
 
 func WithStartCaps(wordlist []string) []string {

@@ -26,6 +26,7 @@ var (
 	includeLeetCode        bool
 	includeUppercase       bool
 	includeMask            string
+	includeYearRange       int
 )
 
 var companyCmd = &cobra.Command{
@@ -42,6 +43,11 @@ var companyCmd = &cobra.Command{
 
 		if includeYear && includeShortYear {
 			fmt.Println("You cannot use both --year and --short-year")
+			return
+		}
+
+		if (!includeYear && !includeShortYear) && includeYearRange != 0 {
+			fmt.Println("You cannot use --year-range without --year or --short-year")
 			return
 		}
 		// End Temp
@@ -79,8 +85,9 @@ func init() {
 		return
 	}
 	companyCmd.Flags().BoolVarP(&includeYear, "year", "y", false, "Include the current year in the passwords")
-	companyCmd.Flags().BoolVar(&includeMixedCase, "mixed-case", false, "Include variations with mixed case")
 	companyCmd.Flags().BoolVar(&includeYearSeparators, "year-separators", false, "Add special characters between the company name and the year")
+	companyCmd.Flags().IntVar(&includeYearRange, "year-range", 0, "Include a range of years around the current year")
+	companyCmd.Flags().BoolVar(&includeMixedCase, "mixed-case", false, "Include variations with mixed case")
 	companyCmd.Flags().BoolVarP(&includeSpecialChars, "end-special", "s", false, "Add special characters at the end of the passwords")
 	companyCmd.Flags().BoolVarP(&includeAllPermutations, "all", "a", false, "Generate all possible permutations of the password")
 	companyCmd.Flags().BoolVar(&includeStartCaps, "start-caps", false, "Capitalize the first letter of the passwords")
@@ -121,22 +128,17 @@ func generateCompanyPasslist(name, city string) []string {
 		wordlist = generate.WithUppercase(wordlist)
 	}
 
+	year := time.Now().Year()
 	if includeShortYear {
-		year := time.Now().Year() % 100
-		var separators string
-		if includeYearSeparators {
-			separators = "!@#$%+?=*"
-		}
-		wordlist = generate.WithYearAndSeparators(wordlist, year, separators)
+		year = year % 100
 	}
 
-	if includeYear {
-		year := time.Now().Year()
+	if includeYear || includeShortYear {
 		var separators string
 		if includeYearSeparators {
 			separators = "!@#$%+?=*"
 		}
-		wordlist = generate.WithYearAndSeparators(wordlist, year, separators)
+		wordlist = generate.WithYearAndSeparators(wordlist, year, separators, includeYearRange)
 	}
 
 	if includeSpecialChars {
