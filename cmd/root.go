@@ -9,8 +9,7 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "passfinder",
-	Short: "TODO",
-	Long:  `TODO`,
+	Short: "Generate password wordlists with customizable options for security testing !",
 }
 
 func Execute() {
@@ -22,5 +21,5 @@ func Execute() {
 
 func init() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
-	rootCmd.PersistentFlags().StringVarP(&config.GlobalConfig.OutputFile, "output", "", "", "Output file")
+	rootCmd.PersistentFlags().StringVarP(&config.GlobalConfig.OutputFile, "output", "o", "", "Write to output file")
 }

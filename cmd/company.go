@@ -16,11 +16,11 @@ import (
 var (
 	companyName            string
 	city                   string
-	yearSeparators         bool
+	includeYearSeparators  bool
 	includeYear            bool
 	includeAllPermutations bool
-	startCaps              bool
-	shortYear              bool
+	includeStartCaps       bool
+	includeShortYear       bool
 	includeSpecialChars    bool
 	includeMixedCase       bool
 	includeLeetCode        bool
@@ -33,15 +33,17 @@ var companyCmd = &cobra.Command{
 	Long:  `Generate a passlist based on company name, current year, city, and other relevant information.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		if (!includeYear && !shortYear) && yearSeparators {
+		// Temp
+		if (!includeYear && !includeShortYear) && includeYearSeparators {
 			fmt.Println("You cannot use --year-separators without --year or --short-year")
 			return
 		}
 
-		if includeYear && shortYear {
+		if includeYear && includeShortYear {
 			fmt.Println("You cannot use both --year and --short-year")
 			return
 		}
+		// End Temp
 
 		wordlist := generateCompanyPasslist(companyName, city)
 
@@ -75,35 +77,33 @@ func init() {
 	if err != nil {
 		return
 	}
-	// companyCmd.Flags().StringVarP(&city, "city", "c", "", "City of the company")
-	companyCmd.Flags().BoolVar(&includeYear, "year", false, "Include the current year in passwords")
-	companyCmd.Flags().BoolVar(&includeMixedCase, "mixed-case", false, "Include mixed case variations")
-	companyCmd.Flags().BoolVar(&yearSeparators, "year-separators", false, "Special characters to separate the company name and the year")
-	companyCmd.Flags().BoolVar(&includeSpecialChars, "end-special", false, "Include special characters at the end of the passwords")
-	companyCmd.Flags().BoolVar(&includeAllPermutations, "all", false, "Run all permutations")
-	companyCmd.Flags().BoolVar(&startCaps, "start-caps", false, "First letter in caps")
-	companyCmd.Flags().BoolVar(&shortYear, "short-year", false, "Truncate the year to two digits")
-	companyCmd.Flags().BoolVar(&includeLeetCode, "leet", false, "Add leet code")
-	// companyCmd.Flags().BoolVar(&includeSpecialChars, "pass-pol", false, "Password Policy (remove bad passwords)")
-	companyCmd.Flags().StringVar(&includeMask, "mask", "", "Add mask to the list (e.g., '%w%s')")
+	companyCmd.Flags().BoolVarP(&includeYear, "year", "y", false, "Include the current year in the passwords")
+	companyCmd.Flags().BoolVar(&includeMixedCase, "mixed-case", false, "Include variations with mixed case")
+	companyCmd.Flags().BoolVar(&includeYearSeparators, "year-separators", false, "Add special characters between the company name and the year")
+	companyCmd.Flags().BoolVarP(&includeSpecialChars, "end-special", "s", false, "Add special characters at the end of the passwords")
+	companyCmd.Flags().BoolVarP(&includeAllPermutations, "all", "a", false, "Generate all possible permutations of the password")
+	companyCmd.Flags().BoolVar(&includeStartCaps, "start-caps", false, "Capitalize the first letter of the passwords")
+	companyCmd.Flags().BoolVar(&includeShortYear, "short-year", false, "Truncate the year to the last two digits")
+	companyCmd.Flags().BoolVarP(&includeLeetCode, "leet", "l", false, "Convert characters to leet speak")
+	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
 }
 
 func generateCompanyPasslist(name, city string) []string {
 	var wordlist []string
 
-	wordlist = append(wordlist, strings.ToLower(name)) // Init the wordlist
+	wordlist = append(wordlist, strings.ToLower(name))
 
 	if includeAllPermutations {
 		includeMixedCase = true
 		includeYear = true
-		yearSeparators = true
-		shortYear = false // We cannot have both year and shortYear
+		includeYearSeparators = true
+		includeShortYear = false
 		includeSpecialChars = true
 		includeLeetCode = true
-		startCaps = true
+		includeStartCaps = true
 	}
 
-	if startCaps {
+	if includeStartCaps {
 		wordlist = generate.WithStartCaps(wordlist)
 	}
 
@@ -115,10 +115,10 @@ func generateCompanyPasslist(name, city string) []string {
 		wordlist = generate.WithLeetCode(wordlist)
 	}
 
-	if shortYear {
+	if includeShortYear {
 		year := time.Now().Year() % 100
 		var separators string
-		if yearSeparators {
+		if includeYearSeparators {
 			separators = "!@#$%+?=*"
 		}
 		wordlist = generate.WithYearAndSeparators(wordlist, year, separators)
@@ -127,7 +127,7 @@ func generateCompanyPasslist(name, city string) []string {
 	if includeYear {
 		year := time.Now().Year()
 		var separators string
-		if yearSeparators {
+		if includeYearSeparators {
 			separators = "!@#$%+?=*"
 		}
 		wordlist = generate.WithYearAndSeparators(wordlist, year, separators)
