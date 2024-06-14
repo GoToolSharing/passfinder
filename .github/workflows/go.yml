@@ -39,6 +39,8 @@ jobs:
 
     - name: test
       env:
-        GOOS: 1.22
+        GOOS: linux
         GOARCH: amd64
+      with:
+        go-version: 1.22
       run: go test -v ./...
