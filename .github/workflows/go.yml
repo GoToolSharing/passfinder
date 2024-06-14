@@ -39,6 +39,6 @@ jobs:
 
     - name: test
       env:
-        GOOS: ${{ matrix.os }}
-        GOARCH: ${{ matrix.arch }}
+        GOOS: 1.22
+        GOARCH: amd64
       run: go test -v ./...
