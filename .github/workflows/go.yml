@@ -40,4 +40,5 @@ jobs:
     - name: test
       env:
         GOOS: ${{ matrix.os }}
+        GOARCH: ${{ matrix.arch }}
       run: go test -v ./...
