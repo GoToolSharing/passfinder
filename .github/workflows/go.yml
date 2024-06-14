@@ -34,9 +34,17 @@ jobs:
         GOARCH: ${{ matrix.arch }}
       run: go build -v ./...
 
+    - name: Set outputs
+      id: set-outputs
+      run: |
+        echo "::set-output name=go::${{ matrix.go }}"
+        echo "::set-output name=os::${{ matrix.os }}"
+        echo "::set-output name=arch::${{ matrix.arch }}"
+
   test:
     runs-on: ubuntu-latest
-    if: matrix.go == '1.22' && matrix.os == 'linux' && matrix.arch == 'amd64'
+    needs: build
+    if: needs.build.outputs.go == '1.22' && needs.build.outputs.os == 'linux' && needs.build.outputs.arch == 'amd64'
     steps:
     - uses: actions/checkout@v4
 
