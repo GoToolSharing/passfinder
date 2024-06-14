@@ -21,7 +21,7 @@ linters:
     - ineffassign
     - staticcheck
     - typecheck
-    # - unused
+    - unused
     # Non Default linters
     - asciicheck
     - bodyclose
