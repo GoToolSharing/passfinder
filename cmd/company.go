@@ -14,19 +14,17 @@ import (
 )
 
 var (
-	companyName            string
-	city                   string
-	includeYearSeparators  bool
-	includeYear            bool
-	includeAllPermutations bool
-	includeStartCaps       bool
-	includeShortYear       bool
-	includeSpecialChars    bool
-	includeMixedCase       bool
-	includeLeetCode        bool
-	includeUppercase       bool
-	includeMask            string
-	includeYearRange       int
+	companyName           string
+	includeYearSeparators bool
+	includeYear           bool
+	includeStartCaps      bool
+	includeShortYear      bool
+	includeEndSpecial     bool
+	includeMixedCase      bool
+	includeLeetCode       bool
+	includeUppercase      bool
+	includeMask           string
+	includeYearRange      int
 )
 
 var companyCmd = &cobra.Command{
@@ -52,9 +50,8 @@ var companyCmd = &cobra.Command{
 		}
 		// End Temp
 
-		wordlist := generateCompanyPasslist(companyName, city)
+		wordlist := generateCompanyPasslist(companyName)
 
-		wordlist = utils.RemoveDuplicates(wordlist)
 		if config.GlobalConfig.OutputFile != "" {
 			file, err := os.OpenFile(config.GlobalConfig.OutputFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 			if err != nil {
@@ -88,8 +85,7 @@ func init() {
 	companyCmd.Flags().BoolVar(&includeYearSeparators, "year-separators", false, "Add special characters between the company name and the year")
 	companyCmd.Flags().IntVar(&includeYearRange, "year-range", 0, "Include a range of years around the current year")
 	companyCmd.Flags().BoolVar(&includeMixedCase, "mixed-case", false, "Include variations with mixed case")
-	companyCmd.Flags().BoolVarP(&includeSpecialChars, "end-special", "s", false, "Add special characters at the end of the passwords")
-	companyCmd.Flags().BoolVarP(&includeAllPermutations, "all", "a", false, "Generate all possible permutations of the password")
+	companyCmd.Flags().BoolVarP(&includeEndSpecial, "end-special", "s", false, "Add special characters at the end of the passwords")
 	companyCmd.Flags().BoolVar(&includeStartCaps, "start-caps", false, "Capitalize the first letter of the passwords")
 	companyCmd.Flags().BoolVar(&includeShortYear, "short-year", false, "Truncate the year to the last two digits")
 	companyCmd.Flags().BoolVarP(&includeLeetCode, "leet", "l", false, "Convert characters to leet speak")
@@ -97,20 +93,10 @@ func init() {
 	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
 }
 
-func generateCompanyPasslist(name, city string) []string {
+func generateCompanyPasslist(name string) []string {
 	var wordlist []string
 
 	wordlist = append(wordlist, strings.ToLower(name))
-
-	if includeAllPermutations {
-		includeMixedCase = true
-		includeYear = true
-		includeYearSeparators = true
-		includeShortYear = false
-		includeSpecialChars = true
-		includeLeetCode = true
-		includeStartCaps = true
-	}
 
 	if includeStartCaps {
 		wordlist = generate.WithStartCaps(wordlist)
@@ -141,7 +127,7 @@ func generateCompanyPasslist(name, city string) []string {
 		wordlist = generate.WithYearAndSeparators(wordlist, year, separators, includeYearRange)
 	}
 
-	if includeSpecialChars {
+	if includeEndSpecial {
 		wordlist = generate.WithSpecialChars(wordlist)
 	}
 
@@ -149,5 +135,5 @@ func generateCompanyPasslist(name, city string) []string {
 		wordlist = generate.WithMask(wordlist, includeMask)
 	}
 
-	return wordlist
+	return utils.RemoveDuplicates(wordlist)
 }
