@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -189,6 +190,56 @@ func TestMaskFlag(t *testing.T) {
 
 	if got != expected {
 		t.Errorf("Expected %q, but got %q", expected, got)
+	}
+
+	t.Cleanup(cleanup)
+}
+
+func TestNumbersFlag(t *testing.T) {
+	includeNumbers = true
+
+	// Generate 20 sets of random numbers
+	var wordlists [][]string
+	for i := 0; i < 20; i++ {
+		wordlist := generateCompanyPasslist("demo")
+		wordlists = append(wordlists, wordlist)
+	}
+
+	// Check that all sets of random numbers are different
+	for i := 0; i < len(wordlists)-1; i++ {
+		for j := i + 1; j < len(wordlists); j++ {
+			if reflect.DeepEqual(wordlists[i], wordlists[j]) {
+				t.Errorf("Expected different sets of random numbers, but got %q and %q", wordlists[i], wordlists[j])
+			}
+		}
+	}
+
+	t.Cleanup(cleanup)
+}
+
+func TestNumbersRangeFlag(t *testing.T) {
+	includeNumbers = true
+	includeNumbersRange = 10
+
+	// Generate 20 sets of random numbers
+	var wordlists [][]string
+	for i := 0; i < 20; i++ {
+		wordlist := generateCompanyPasslist("demo")
+		wordlists = append(wordlists, wordlist)
+	}
+
+	// -1 because we don't count the first demo pass
+	if len(wordlists[0])-1 != 10 {
+		t.Errorf("Expected 10 words, got %d", len(wordlists[0]))
+	}
+
+	// Check that all sets of random numbers are different
+	for i := 0; i < len(wordlists)-1; i++ {
+		for j := i + 1; j < len(wordlists); j++ {
+			if reflect.DeepEqual(wordlists[i], wordlists[j]) {
+				t.Errorf("Expected different sets of random numbers, but got %q and %q", wordlists[i], wordlists[j])
+			}
+		}
 	}
 
 	t.Cleanup(cleanup)
