@@ -3,7 +3,6 @@ package generate
 import (
 	"fmt"
 	"github.com/GoToolSharing/passfinder/lib/utils"
-	"math/rand/v2"
 	"strconv"
 	"strings"
 )
@@ -20,16 +19,16 @@ func WithSpecialChars(wordlist []string) []string {
 }
 
 func WithNumbers(wordlist []string, specificRange int) []string {
-	Numbers := make([]int, specificRange)
+	Numbers := make([]int, specificRange+1)
 	for _, word := range wordlist {
-		for range Numbers {
-			var randomPassword = word + strconv.Itoa(rand.IntN(specificRange))
+		for i := range Numbers {
+			var newPassword = word + strconv.Itoa(i)
 
-			for utils.Contains(wordlist, randomPassword) {
-				randomPassword = word + strconv.Itoa(rand.IntN(specificRange))
+			for utils.Contains(wordlist, newPassword) {
+				newPassword = word + strconv.Itoa(i)
 			}
 
-			wordlist = append(wordlist, randomPassword)
+			wordlist = append(wordlist, newPassword)
 		}
 	}
 	return wordlist
