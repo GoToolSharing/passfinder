@@ -25,6 +25,8 @@ var (
 	includeUppercase      bool
 	includeMask           string
 	includeYearRange      int
+	includeNumbers        bool
+	includeNumbersRange   int
 )
 
 var companyCmd = &cobra.Command{
@@ -46,6 +48,11 @@ var companyCmd = &cobra.Command{
 
 		if (!includeYear && !includeShortYear) && includeYearRange != 0 {
 			fmt.Println("You cannot use --year-range without --year or --short-year")
+			return
+		}
+
+		if includeYear && includeNumbers {
+			fmt.Println("You cannot use both --year and --numbers")
 			return
 		}
 		// End Temp
@@ -91,6 +98,9 @@ func init() {
 	companyCmd.Flags().BoolVarP(&includeLeetCode, "leet", "l", false, "Convert characters to leet speak")
 	companyCmd.Flags().BoolVarP(&includeUppercase, "uppercase", "u", false, "Capitalize all letters of the passwords")
 	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
+	companyCmd.Flags().BoolVar(&includeNumbers, "numbers", false, "Include numbers to the passwords")
+	companyCmd.Flags().IntVar(&includeNumbersRange, "numbers-range", 20, "Apply a range for numbers option")
+
 }
 
 func generateCompanyPasslist(name string) []string {
@@ -133,6 +143,10 @@ func generateCompanyPasslist(name string) []string {
 
 	if includeMask != "" {
 		wordlist = generate.WithMask(wordlist, includeMask)
+	}
+
+	if includeNumbers && includeNumbersRange != 0 {
+		wordlist = generate.WithNumbers(wordlist, includeNumbersRange)
 	}
 
 	return utils.RemoveDuplicates(wordlist)
