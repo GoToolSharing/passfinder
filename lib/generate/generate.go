@@ -2,6 +2,7 @@ package generate
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -13,6 +14,16 @@ func WithSpecialChars(wordlist []string) []string {
 		}
 	}
 
+	return wordlist
+}
+
+func WithNumbers(wordlist []string, specificRange int) []string {
+	Numbers := make([]int, specificRange+1)
+	for _, word := range wordlist {
+		for i := range Numbers {
+			wordlist = append(wordlist, word+strconv.Itoa(i))
+		}
+	}
 	return wordlist
 }
 

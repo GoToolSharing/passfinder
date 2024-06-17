@@ -25,6 +25,7 @@ var (
 	includeUppercase      bool
 	includeMask           string
 	includeYearRange      int
+	includeNumbers        int
 )
 
 var companyCmd = &cobra.Command{
@@ -91,6 +92,7 @@ func init() {
 	companyCmd.Flags().BoolVarP(&includeLeetCode, "leet", "l", false, "Convert characters to leet speak")
 	companyCmd.Flags().BoolVarP(&includeUppercase, "uppercase", "u", false, "Capitalize all letters of the passwords")
 	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
+	companyCmd.Flags().IntVar(&includeNumbers, "numbers", 100, "Apply a range of numbers")
 }
 
 func generateCompanyPasslist(name string) []string {
@@ -133,6 +135,11 @@ func generateCompanyPasslist(name string) []string {
 
 	if includeMask != "" {
 		wordlist = generate.WithMask(wordlist, includeMask)
+	}
+
+	if includeNumbers != 0 {
+		// includeNumbers value default = 100
+		wordlist = generate.WithNumbers(wordlist, includeNumbers)
 	}
 
 	return utils.RemoveDuplicates(wordlist)
