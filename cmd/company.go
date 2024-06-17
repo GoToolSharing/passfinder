@@ -124,6 +124,10 @@ func generateCompanyPasslist(name string) []string {
 		wordlist = generate.WithUppercase(wordlist)
 	}
 
+	if includeNumbers && includeNumbersRange != 0 {
+		wordlist = generate.WithNumbers(wordlist, includeNumbersRange)
+	}
+
 	year := time.Now().Year()
 	if includeShortYear {
 		year = year % 100
@@ -143,10 +147,6 @@ func generateCompanyPasslist(name string) []string {
 
 	if includeMask != "" {
 		wordlist = generate.WithMask(wordlist, includeMask)
-	}
-
-	if includeNumbers && includeNumbersRange != 0 {
-		wordlist = generate.WithNumbers(wordlist, includeNumbersRange)
 	}
 
 	return utils.RemoveDuplicates(wordlist)
