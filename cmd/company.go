@@ -98,8 +98,8 @@ func init() {
 	companyCmd.Flags().BoolVarP(&includeLeetCode, "leet", "l", false, "Convert characters to leet speak")
 	companyCmd.Flags().BoolVarP(&includeUppercase, "uppercase", "u", false, "Capitalize all letters of the passwords")
 	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
-	companyCmd.Flags().BoolVar(&includeNumbers, "numbers", false, "Apply random numbers to the passwords")
-	companyCmd.Flags().IntVar(&includeNumbersRange, "numbers-range", 20, "Apply a range for option random numbers")
+	companyCmd.Flags().BoolVar(&includeNumbers, "numbers", false, "Include numbers to the passwords")
+	companyCmd.Flags().IntVar(&includeNumbersRange, "numbers-range", 20, "Apply a range for numbers option")
 
 }
 
@@ -146,7 +146,6 @@ func generateCompanyPasslist(name string) []string {
 	}
 
 	if includeNumbers && includeNumbersRange != 0 {
-		// includeNumbers value default = 20
 		wordlist = generate.WithNumbers(wordlist, includeNumbersRange)
 	}
 
