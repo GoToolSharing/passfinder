@@ -194,3 +194,10 @@ func WithUppercase(wordlist []string) []string {
 	}
 	return wordlist
 }
+
+func WithPostal(wordlist []string, includePostal int) []string {
+	for _, word := range wordlist {
+		wordlist = append(wordlist, word+strconv.Itoa(includePostal))
+	}
+	return wordlist
+}

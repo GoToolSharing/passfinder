@@ -27,6 +27,7 @@ var (
 	includeYearRange      int
 	includeNumbers        bool
 	includeNumbersRange   int
+	includePostal         int
 )
 
 var companyCmd = &cobra.Command{
@@ -53,6 +54,11 @@ var companyCmd = &cobra.Command{
 
 		if includeYear && includeNumbers {
 			fmt.Println("You cannot use both --year and --numbers")
+			return
+		}
+
+		if includeYear && includePostal != 0 {
+			fmt.Println("You cannot use both --year and --postal")
 			return
 		}
 		// End Temp
@@ -100,6 +106,7 @@ func init() {
 	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
 	companyCmd.Flags().BoolVar(&includeNumbers, "numbers", false, "Include numbers to the passwords")
 	companyCmd.Flags().IntVar(&includeNumbersRange, "numbers-range", 20, "Apply a range for numbers option")
+	companyCmd.Flags().IntVarP(&includePostal, "postal", "p", 0, "Include postal code to the passwords")
 
 }
 
@@ -122,6 +129,10 @@ func generateCompanyPasslist(name string) []string {
 
 	if includeUppercase {
 		wordlist = generate.WithUppercase(wordlist)
+	}
+
+	if includePostal != 0 {
+		wordlist = generate.WithPostal(wordlist, includePostal)
 	}
 
 	if includeNumbers && includeNumbersRange != 0 {

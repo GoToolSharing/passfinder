@@ -16,6 +16,9 @@ func cleanup() {
 	includeUppercase = false
 	includeMask = ""
 	includeYearRange = 0
+	includePostal = 0
+	includeNumbers = false
+	includeNumbersRange = 20
 }
 
 func TestWithoutFlag(t *testing.T) {
@@ -219,6 +222,22 @@ func TestNumbersRangeFlag(t *testing.T) {
 	got := strings.Join(wordlist, "\n")
 
 	expected := "demo\ndemo0\ndemo1\ndemo2\ndemo3\ndemo4\ndemo5\ndemo6\ndemo7\ndemo8\ndemo9\ndemo10"
+
+	if got != expected {
+		t.Errorf("Expected %q, but got %q", expected, got)
+	}
+
+	t.Cleanup(cleanup)
+}
+
+func TestPostalFlag(t *testing.T) {
+	includePostal = 75000
+
+	wordlist := generateCompanyPasslist("demo")
+
+	got := strings.Join(wordlist, "\n")
+
+	expected := "demo\ndemo75000"
 
 	if got != expected {
 		t.Errorf("Expected %q, but got %q", expected, got)
