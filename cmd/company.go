@@ -50,6 +50,11 @@ var companyCmd = &cobra.Command{
 			fmt.Println("You cannot use --year-range without --year or --short-year")
 			return
 		}
+		
+        if includeYear && includeNumbers {
+			fmt.Println("You cannot use both --year and --numbers")
+			return
+		}
 		// End Temp
 
 		wordlist := generateCompanyPasslist(companyName)
