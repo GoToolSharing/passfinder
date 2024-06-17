@@ -21,7 +21,7 @@ func WithNumbers(wordlist []string, specificRange int) []string {
 	Numbers := make([]int, specificRange+1)
 	for _, word := range wordlist {
 		for i := range Numbers {
-			var newPassword = word + strconv.Itoa(i)
+			newPassword := word + strconv.Itoa(i)
 
 			wordlist = append(wordlist, newPassword)
 		}
