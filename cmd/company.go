@@ -60,7 +60,7 @@ var companyCmd = &cobra.Command{
 		wordlist := generateCompanyPasslist(companyName)
 
 		if config.GlobalConfig.OutputFile != "" {
-			file, err := os.OpenFile(config.GlobalConfig.OutputFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			file, err := os.OpenFile(config.GlobalConfig.OutputFile, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 			if err != nil {
 				log.Fatal(err)
 			}
