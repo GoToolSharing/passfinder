@@ -217,3 +217,13 @@ func WithPostal(wordlist []string, includePostal int) []string {
 	}
 	return result
 }
+
+func WithCity(wordlist []string, includeCity string) []string {
+	var result []string
+
+	for _, word := range wordlist {
+		result = append(wordlist, word+includeCity)
+	}
+
+	return result
+}
