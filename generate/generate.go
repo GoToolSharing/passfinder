@@ -218,6 +218,7 @@ func WithPostal(wordlist []string, includePostal int) []string {
 	return result
 }
 
+// WithCity appends the city name to each word in the wordlist
 func WithCity(wordlist []string, includeCity string) []string {
 	var result []string
 
