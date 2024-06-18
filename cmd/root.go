@@ -22,5 +22,5 @@ func Execute() {
 func init() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	rootCmd.PersistentFlags().StringVarP(&config.GlobalConfig.OutputFile, "output", "o", "", "Write to output file")
-	rootCmd.PersistentFlags().BoolVarP(&config.GlobalConfig.BatchParam, "batch", "b", false, "Don't ask questions")
+	rootCmd.PersistentFlags().BoolVar(&config.GlobalConfig.BatchParam, "batch", false, "Don't ask questions")
 }
