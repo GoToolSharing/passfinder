@@ -29,6 +29,7 @@ var (
 	includeMask           string
 	includeNumbers        int
 	includePostal         int
+	includeAll            bool
 )
 
 var companyCmd = &cobra.Command{
@@ -54,6 +55,7 @@ func init() {
 	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
 	companyCmd.Flags().IntVar(&includeNumbers, "numbers", 0, "Include numbers to the passwords")
 	companyCmd.Flags().IntVarP(&includePostal, "postal", "p", 0, "Include postal code to the passwords")
+	companyCmd.Flags().BoolVarP(&includeAll, "all", "a", false, "Include all variations")
 }
 
 // runCompanyCmd executes the main logic for generating the password list
@@ -130,6 +132,18 @@ func generateCompanyPasslist(name string) []string {
 	spin.Start()
 	baseWordlist := []string{strings.ToLower(name)}
 	wordlist := baseWordlist
+
+	if includeAll {
+		includeYearSeparators = true
+		includeYear = 0
+		includeStartCaps = true
+		includeShortYear = 0
+		includeEndSpecial = true
+		includeMixedCase = true
+		includeLeetCode = true
+		includeUppercase = true
+		includeNumbers = 20
+	}
 
 	if includeYear != -1 || includeShortYear != -1 {
 		var separators string
