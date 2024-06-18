@@ -21,7 +21,7 @@ var (
 	includeYearSeparators bool
 	includeYear           int
 	includeStartCaps      bool
-	includeShortYear      bool
+	includeShortYear      int
 	includeEndSpecial     bool
 	includeMixedCase      bool
 	includeLeetCode       bool
@@ -48,7 +48,7 @@ func init() {
 	companyCmd.Flags().BoolVar(&includeMixedCase, "mixed-case", false, "Include variations with mixed case")
 	companyCmd.Flags().BoolVarP(&includeEndSpecial, "end-special", "s", false, "Add special characters at the end of the passwords")
 	companyCmd.Flags().BoolVar(&includeStartCaps, "start-caps", false, "Capitalize the first letter of the passwords")
-	companyCmd.Flags().BoolVar(&includeShortYear, "short-year", false, "Truncate the year to the last two digits")
+	companyCmd.Flags().IntVar(&includeShortYear, "short-year", -1, "Truncate the year to the last two digits")
 	companyCmd.Flags().BoolVarP(&includeLeetCode, "leet", "l", false, "Convert characters to leet speak")
 	companyCmd.Flags().BoolVarP(&includeUppercase, "uppercase", "u", false, "Capitalize all letters of the passwords")
 	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
@@ -84,7 +84,7 @@ func runCompanyCmd(cmd *cobra.Command, args []string) {
 
 // validateFlags ensures that the provided flags are logically consistent
 func validateFlags() error {
-	if (includeYear == -1 && !includeShortYear) && includeYearSeparators {
+	if (includeYear == -1 && includeShortYear == -1) && includeYearSeparators {
 		return fmt.Errorf("You cannot use --year-separators without --year or --short-year")
 	}
 
@@ -131,7 +131,7 @@ func generateCompanyPasslist(name string) []string {
 	baseWordlist := []string{strings.ToLower(name)}
 	wordlist := baseWordlist
 
-	if includeYear != -1 || includeShortYear {
+	if includeYear != -1 || includeShortYear != -1 {
 		var separators string
 		if includeYearSeparators {
 			separators = "!@#$%+?=*"
@@ -141,9 +141,9 @@ func generateCompanyPasslist(name string) []string {
 		if includeYear != -1 {
 			yearWordlist = append(yearWordlist, generate.WithYear(baseWordlist, year, includeYear, separators)...)
 		}
-		if includeShortYear {
+		if includeShortYear != -1 {
 			shortYear := year % 100
-			yearWordlist = append(yearWordlist, generate.WithYear(baseWordlist, shortYear, includeYear, separators)...)
+			yearWordlist = append(yearWordlist, generate.WithYear(baseWordlist, shortYear, includeShortYear, separators)...)
 		}
 		wordlist = append(wordlist, yearWordlist...)
 	}

@@ -38,7 +38,7 @@ func TestYearRangeFlag(t *testing.T) {
 }
 
 func TestShortYearFlag(t *testing.T) {
-	includeShortYear = true
+	includeShortYear = 0
 
 	wordlist := generateCompanyPasslist("demo")
 

@@ -9,7 +9,7 @@ func testCleanup() {
 	includeYearSeparators = false
 	includeYear = -1
 	includeStartCaps = false
-	includeShortYear = false
+	includeShortYear = -1
 	includeEndSpecial = false
 	includeMixedCase = false
 	includeLeetCode = false
