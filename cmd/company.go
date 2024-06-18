@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/GoToolSharing/passfinder/config"
-	"github.com/GoToolSharing/passfinder/lib/generate"
-	"github.com/GoToolSharing/passfinder/lib/utils"
+	"github.com/GoToolSharing/passfinder/generate"
+	"github.com/GoToolSharing/passfinder/utils"
 	"github.com/briandowns/spinner"
 	"github.com/spf13/cobra"
 )
@@ -37,77 +37,14 @@ var companyCmd = &cobra.Command{
 	Use:   "company",
 	Short: "Generate a passlist based on company information",
 	Long:  `Generate a passlist based on company name, current year, city, and other relevant information.`,
-	Run: func(cmd *cobra.Command, args []string) {
-
-		// Temp
-		if (!includeYear && !includeShortYear) && includeYearSeparators {
-			fmt.Println("You cannot use --year-separators without --year or --short-year")
-			return
-		}
-
-		if includeYear && includeShortYear {
-			fmt.Println("You cannot use both --year and --short-year")
-			return
-		}
-
-		if (!includeYear && !includeShortYear) && includeYearRange != 0 {
-			fmt.Println("You cannot use --year-range without --year or --short-year")
-			return
-		}
-
-		if includeYear && includeNumbers {
-			fmt.Println("You cannot use both --year and --numbers")
-			return
-		}
-
-		if includeYear && includePostal != 0 {
-			fmt.Println("You cannot use both --year and --postal")
-			return
-		}
-		// End Temp
-
-		wordlist := generateCompanyPasslist(companyName)
-
-		if config.GlobalConfig.OutputFile != "" {
-			spin := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
-			sigs := make(chan os.Signal, 1)
-			signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-			go func() {
-				<-sigs
-				spin.Stop()
-				os.Exit(0)
-			}()
-
-			spin.Start()
-			file, err := os.OpenFile(config.GlobalConfig.OutputFile, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer file.Close()
-			for _, password := range wordlist {
-				_, err := file.WriteString(password + "\n")
-				if err != nil {
-					log.Fatal(err)
-					break
-				}
-			}
-			spin.Stop()
-		} else {
-			for _, password := range wordlist {
-				fmt.Println(password)
-			}
-		}
-	},
+	Run:   runCompanyCmd,
 }
 
 func init() {
 	rootCmd.AddCommand(companyCmd)
 
 	companyCmd.Flags().StringVarP(&companyName, "name", "n", "", "Company name")
-	err := companyCmd.MarkFlagRequired("name")
-	if err != nil {
-		return
-	}
+	_ = companyCmd.MarkFlagRequired("name")
 	companyCmd.Flags().BoolVarP(&includeYear, "year", "y", false, "Include the current year in the passwords")
 	companyCmd.Flags().BoolVar(&includeYearSeparators, "year-separators", false, "Add special characters between the company name and the year")
 	companyCmd.Flags().IntVar(&includeYearRange, "year-range", 0, "Include a range of years around the current year")
@@ -121,9 +58,65 @@ func init() {
 	companyCmd.Flags().BoolVar(&includeNumbers, "numbers", false, "Include numbers to the passwords")
 	companyCmd.Flags().IntVar(&includeNumbersRange, "numbers-range", 20, "Apply a range for numbers option")
 	companyCmd.Flags().IntVarP(&includePostal, "postal", "p", 0, "Include postal code to the passwords")
-
 }
 
+// runCompanyCmd executes the main logic for generating the password list
+func runCompanyCmd(cmd *cobra.Command, args []string) {
+	if err := validateFlags(); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	wordlist := generateCompanyPasslist(companyName)
+
+	if config.GlobalConfig.OutputFile != "" {
+		writePasswordsToFile(wordlist, config.GlobalConfig.OutputFile)
+	} else {
+		for _, password := range wordlist {
+			fmt.Println(password)
+		}
+	}
+}
+
+// validateFlags ensures that the provided flags are logically consistent
+func validateFlags() error {
+	if (!includeYear && !includeShortYear) && includeYearSeparators {
+		return fmt.Errorf("You cannot use --year-separators without --year or --short-year")
+	}
+
+	if (!includeYear && !includeShortYear) && includeYearRange != 0 {
+		return fmt.Errorf("You cannot use --year-range without --year or --short-year")
+	}
+
+	return nil
+}
+
+// writePasswordsToFile writes the generated passwords to the specified file
+func writePasswordsToFile(wordlist []string, filename string) {
+	spin := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigs
+		spin.Stop()
+		os.Exit(0)
+	}()
+
+	spin.Start()
+	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	for _, password := range wordlist {
+		if _, err := file.WriteString(password + "\n"); err != nil {
+			log.Fatal(err)
+		}
+	}
+	spin.Stop()
+}
+
+// generateCompanyPasslist generates a list of passwords based on the provided company name and flags
 func generateCompanyPasslist(name string) []string {
 	spin := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 	sigs := make(chan os.Signal, 1)
@@ -135,57 +128,59 @@ func generateCompanyPasslist(name string) []string {
 	}()
 
 	spin.Start()
-	var wordlist []string
-
-	wordlist = append(wordlist, strings.ToLower(name))
-
-	if includeStartCaps {
-		wordlist = generate.WithStartCaps(wordlist)
-	}
-
-	if includeMixedCase {
-		wordlist = generate.WithMixedCase(wordlist)
-	}
-
-	if includeLeetCode {
-		wordlist = generate.WithLeetCode(wordlist)
-	}
-
-	if includeUppercase {
-		wordlist = generate.WithUppercase(wordlist)
-	}
-
-	if includePostal != 0 {
-		wordlist = generate.WithPostal(wordlist, includePostal)
-	}
-
-	if includeNumbers && includeNumbersRange != 0 {
-		wordlist = generate.WithNumbers(wordlist, includeNumbersRange)
-	}
-
-	year := time.Now().Year()
-	if includeShortYear {
-		year = year % 100
-	}
+	baseWordlist := []string{strings.ToLower(name)}
+	wordlist := baseWordlist
 
 	if includeYear || includeShortYear {
 		var separators string
 		if includeYearSeparators {
 			separators = "!@#$%+?=*"
 		}
-		wordlist = generate.WithYearAndSeparators(wordlist, year, separators, includeYearRange)
+		var yearWordlist []string
+		year := time.Now().Year()
+		if includeYear {
+			yearWordlist = append(yearWordlist, generate.WithYear(baseWordlist, year, includeYearRange, separators)...)
+		}
+		if includeShortYear {
+			shortYear := year % 100
+			yearWordlist = append(yearWordlist, generate.WithYear(baseWordlist, shortYear, includeYearRange, separators)...)
+		}
+		wordlist = append(wordlist, yearWordlist...)
 	}
 
+	if includeNumbers && includeNumbersRange != 0 {
+		wordlist = append(wordlist, generate.WithNumbers(baseWordlist, includeNumbersRange)...)
+	}
+
+	if includePostal != 0 {
+		wordlist = append(wordlist, generate.WithPostal(baseWordlist, includePostal)...)
+	}
+
+	wordlist = append(wordlist, baseWordlist...)
+
+	var transformedWordlist []string
 	if includeEndSpecial {
-		wordlist = generate.WithSpecialChars(wordlist)
+		transformedWordlist = append(transformedWordlist, generate.WithSpecialChars(wordlist)...)
 	}
-
+	if includeMixedCase {
+		transformedWordlist = append(transformedWordlist, generate.WithMixedCase(wordlist)...)
+	}
+	if includeLeetCode {
+		transformedWordlist = append(transformedWordlist, generate.WithLeetCode(wordlist)...)
+	}
+	if includeUppercase {
+		transformedWordlist = append(transformedWordlist, generate.WithUppercase(wordlist)...)
+	}
+	if includeStartCaps {
+		transformedWordlist = append(transformedWordlist, generate.WithStartCaps(wordlist)...)
+	}
 	if includeMask != "" {
-		wordlist = generate.WithMask(wordlist, includeMask)
+		transformedWordlist = append(transformedWordlist, generate.WithMask(wordlist, includeMask)...)
 	}
 
-	wordlist = utils.RemoveDuplicates(wordlist)
+	transformedWordlist = append(wordlist, transformedWordlist...)
 
+	wordlist = utils.RemoveDuplicates(transformedWordlist)
 	spin.Stop()
 
 	return wordlist
