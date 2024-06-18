@@ -166,7 +166,7 @@ func generateCompanyPasslist(name string) []string {
 
 	wordlist = append(wordlist, baseWordlist...)
 
-	var transformedWordlist []string
+	transformedWordlist := wordlist
 	if includeEndSpecial {
 		transformedWordlist = append(transformedWordlist, generate.WithSpecialChars(wordlist)...)
 	}
@@ -174,16 +174,16 @@ func generateCompanyPasslist(name string) []string {
 		transformedWordlist = append(transformedWordlist, generate.WithMixedCase(wordlist)...)
 	}
 	if includeLeetCode {
-		transformedWordlist = append(transformedWordlist, generate.WithLeetCode(wordlist)...)
-	}
-	if includeUppercase {
-		transformedWordlist = append(transformedWordlist, generate.WithUppercase(transformedWordlist)...)
+		transformedWordlist = append(transformedWordlist, generate.WithLeetCode(transformedWordlist)...)
 	}
 	if includeStartCaps {
 		transformedWordlist = append(transformedWordlist, generate.WithStartCaps(transformedWordlist)...)
 	}
+	if includeUppercase {
+		transformedWordlist = append(transformedWordlist, generate.WithUppercase(transformedWordlist)...)
+	}
 	if includeMask != "" {
-		transformedWordlist = append(transformedWordlist, generate.WithMask(wordlist, includeMask)...)
+		transformedWordlist = append(transformedWordlist, generate.WithMask(transformedWordlist, includeMask)...)
 	}
 
 	transformedWordlist = append(wordlist, transformedWordlist...)
