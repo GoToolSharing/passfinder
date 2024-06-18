@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/GoToolSharing/passfinder/config"
 	"github.com/GoToolSharing/passfinder/lib/generate"
 	"github.com/GoToolSharing/passfinder/lib/utils"
+	"github.com/briandowns/spinner"
 	"github.com/spf13/cobra"
 )
 
@@ -66,6 +69,16 @@ var companyCmd = &cobra.Command{
 		wordlist := generateCompanyPasslist(companyName)
 
 		if config.GlobalConfig.OutputFile != "" {
+			spin := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+			sigs := make(chan os.Signal, 1)
+			signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+			go func() {
+				<-sigs
+				spin.Stop()
+				os.Exit(0)
+			}()
+
+			spin.Start()
 			file, err := os.OpenFile(config.GlobalConfig.OutputFile, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 			if err != nil {
 				log.Fatal(err)
@@ -78,6 +91,7 @@ var companyCmd = &cobra.Command{
 					break
 				}
 			}
+			spin.Stop()
 		} else {
 			for _, password := range wordlist {
 				fmt.Println(password)
@@ -111,6 +125,16 @@ func init() {
 }
 
 func generateCompanyPasslist(name string) []string {
+	spin := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		<-sigs
+		spin.Stop()
+		os.Exit(0)
+	}()
+
+	spin.Start()
 	var wordlist []string
 
 	wordlist = append(wordlist, strings.ToLower(name))
@@ -160,5 +184,9 @@ func generateCompanyPasslist(name string) []string {
 		wordlist = generate.WithMask(wordlist, includeMask)
 	}
 
-	return utils.RemoveDuplicates(wordlist)
+	wordlist = utils.RemoveDuplicates(wordlist)
+
+	spin.Stop()
+
+	return wordlist
 }
