@@ -7,7 +7,7 @@ import (
 
 func testCleanup() {
 	includeYearSeparators = false
-	includeYear = false
+	includeYear = -1
 	includeStartCaps = false
 	includeShortYear = false
 	includeEndSpecial = false
@@ -15,10 +15,8 @@ func testCleanup() {
 	includeLeetCode = false
 	includeUppercase = false
 	includeMask = ""
-	includeYearRange = 0
 	includePostal = 0
-	includeNumbers = false
-	includeNumbersRange = 20
+	includeNumbers = 0
 }
 
 func TestWithoutFlag(t *testing.T) {

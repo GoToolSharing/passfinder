@@ -6,7 +6,7 @@ import (
 )
 
 func TestYearFlag(t *testing.T) {
-	includeYear = true
+	includeYear = 0
 
 	wordlist := generateCompanyPasslist("demo")
 
@@ -22,8 +22,7 @@ func TestYearFlag(t *testing.T) {
 }
 
 func TestYearRangeFlag(t *testing.T) {
-	includeYear = true
-	includeYearRange = 3
+	includeYear = 3
 
 	wordlist := generateCompanyPasslist("demo")
 
@@ -55,7 +54,7 @@ func TestShortYearFlag(t *testing.T) {
 }
 
 func TestYearSeparatorsFlag(t *testing.T) {
-	includeYear = true
+	includeYear = 0
 	includeYearSeparators = true
 
 	wordlist := generateCompanyPasslist("demo")

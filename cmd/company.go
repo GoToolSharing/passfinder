@@ -19,7 +19,7 @@ import (
 var (
 	companyName           string
 	includeYearSeparators bool
-	includeYear           bool
+	includeYear           int
 	includeStartCaps      bool
 	includeShortYear      bool
 	includeEndSpecial     bool
@@ -27,7 +27,6 @@ var (
 	includeLeetCode       bool
 	includeUppercase      bool
 	includeMask           string
-	includeYearRange      int
 	includeNumbers        int
 	includePostal         int
 )
@@ -44,9 +43,8 @@ func init() {
 
 	companyCmd.Flags().StringVarP(&companyName, "name", "n", "", "Company name")
 	_ = companyCmd.MarkFlagRequired("name")
-	companyCmd.Flags().BoolVarP(&includeYear, "year", "y", false, "Include the current year in the passwords")
+	companyCmd.Flags().IntVarP(&includeYear, "year", "y", -1, "Include the current year in the passwords")
 	companyCmd.Flags().BoolVar(&includeYearSeparators, "year-separators", false, "Add special characters between the company name and the year")
-	companyCmd.Flags().IntVar(&includeYearRange, "year-range", 0, "Include a range of years around the current year")
 	companyCmd.Flags().BoolVar(&includeMixedCase, "mixed-case", false, "Include variations with mixed case")
 	companyCmd.Flags().BoolVarP(&includeEndSpecial, "end-special", "s", false, "Add special characters at the end of the passwords")
 	companyCmd.Flags().BoolVar(&includeStartCaps, "start-caps", false, "Capitalize the first letter of the passwords")
@@ -54,7 +52,7 @@ func init() {
 	companyCmd.Flags().BoolVarP(&includeLeetCode, "leet", "l", false, "Convert characters to leet speak")
 	companyCmd.Flags().BoolVarP(&includeUppercase, "uppercase", "u", false, "Capitalize all letters of the passwords")
 	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
-	companyCmd.Flags().IntVar(&includeNumbers, "numbers", 20, "Include numbers to the passwords")
+	companyCmd.Flags().IntVar(&includeNumbers, "numbers", 0, "Include numbers to the passwords")
 	companyCmd.Flags().IntVarP(&includePostal, "postal", "p", 0, "Include postal code to the passwords")
 }
 
@@ -86,12 +84,8 @@ func runCompanyCmd(cmd *cobra.Command, args []string) {
 
 // validateFlags ensures that the provided flags are logically consistent
 func validateFlags() error {
-	if (!includeYear && !includeShortYear) && includeYearSeparators {
+	if (includeYear == -1 && !includeShortYear) && includeYearSeparators {
 		return fmt.Errorf("You cannot use --year-separators without --year or --short-year")
-	}
-
-	if (!includeYear && !includeShortYear) && includeYearRange != 0 {
-		return fmt.Errorf("You cannot use --year-range without --year or --short-year")
 	}
 
 	return nil
@@ -137,19 +131,19 @@ func generateCompanyPasslist(name string) []string {
 	baseWordlist := []string{strings.ToLower(name)}
 	wordlist := baseWordlist
 
-	if includeYear || includeShortYear {
+	if includeYear != -1 || includeShortYear {
 		var separators string
 		if includeYearSeparators {
 			separators = "!@#$%+?=*"
 		}
 		var yearWordlist []string
 		year := time.Now().Year()
-		if includeYear {
-			yearWordlist = append(yearWordlist, generate.WithYear(baseWordlist, year, includeYearRange, separators)...)
+		if includeYear != -1 {
+			yearWordlist = append(yearWordlist, generate.WithYear(baseWordlist, year, includeYear, separators)...)
 		}
 		if includeShortYear {
 			shortYear := year % 100
-			yearWordlist = append(yearWordlist, generate.WithYear(baseWordlist, shortYear, includeYearRange, separators)...)
+			yearWordlist = append(yearWordlist, generate.WithYear(baseWordlist, shortYear, includeYear, separators)...)
 		}
 		wordlist = append(wordlist, yearWordlist...)
 	}
