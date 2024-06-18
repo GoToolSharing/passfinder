@@ -28,8 +28,7 @@ var (
 	includeUppercase      bool
 	includeMask           string
 	includeYearRange      int
-	includeNumbers        bool
-	includeNumbersRange   int
+	includeNumbers        int
 	includePostal         int
 )
 
@@ -55,8 +54,7 @@ func init() {
 	companyCmd.Flags().BoolVarP(&includeLeetCode, "leet", "l", false, "Convert characters to leet speak")
 	companyCmd.Flags().BoolVarP(&includeUppercase, "uppercase", "u", false, "Capitalize all letters of the passwords")
 	companyCmd.Flags().StringVarP(&includeMask, "mask", "m", "", "Apply a custom mask to the passwords")
-	companyCmd.Flags().BoolVar(&includeNumbers, "numbers", false, "Include numbers to the passwords")
-	companyCmd.Flags().IntVar(&includeNumbersRange, "numbers-range", 20, "Apply a range for numbers option")
+	companyCmd.Flags().IntVar(&includeNumbers, "numbers", 20, "Include numbers to the passwords")
 	companyCmd.Flags().IntVarP(&includePostal, "postal", "p", 0, "Include postal code to the passwords")
 }
 
@@ -156,8 +154,8 @@ func generateCompanyPasslist(name string) []string {
 		wordlist = append(wordlist, yearWordlist...)
 	}
 
-	if includeNumbers && includeNumbersRange != 0 {
-		wordlist = append(wordlist, generate.WithNumbers(baseWordlist, includeNumbersRange)...)
+	if includeNumbers != 0 {
+		wordlist = append(wordlist, generate.WithNumbers(baseWordlist, includeNumbers)...)
 	}
 
 	if includePostal != 0 {
