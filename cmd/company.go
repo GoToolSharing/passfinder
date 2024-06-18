@@ -69,10 +69,12 @@ func runCompanyCmd(cmd *cobra.Command, args []string) {
 
 	wordlist := generateCompanyPasslist(companyName)
 
-	passwordLength := len(wordlist)
-	isConfirmed := utils.AskConfirmation(fmt.Sprintf("%d passwords will be generated, do you want to continue?", passwordLength))
-	if !isConfirmed {
-		return
+	if !config.GlobalConfig.BatchParam {
+		passwordLength := len(wordlist)
+		isConfirmed := utils.AskConfirmation(fmt.Sprintf("%d passwords will be generated, do you want to continue?", passwordLength))
+		if !isConfirmed {
+			return
+		}
 	}
 
 	if config.GlobalConfig.OutputFile != "" {
